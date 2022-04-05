@@ -62,6 +62,7 @@ export default function App() {
             value={inputText}
             placeholder='Enter Todo'
             style={styles.input}
+            autoFocus={true}
           />
           <View style={styles.buttonRow}>
             <Button text='Back' onPressButton={onHandleBack} />
