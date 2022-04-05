@@ -6,6 +6,7 @@ import {
   TextInput,
   Modal,
   TouchableOpacity,
+  FlatList,
 } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { v4 as uuidv4 } from 'uuid'
@@ -13,10 +14,14 @@ import { v4 as uuidv4 } from 'uuid'
 // Components
 import Button from './components/Button'
 
+interface BasicObject {
+  [key: string]: any
+}
+
 export default function App() {
   const [showModal, setShowModal] = useState(false)
   const [inputText, setInputText] = useState('')
-  const [todoList, setTodoList] = useState<{ [key: string]: string }[]>([])
+  const [todoList, setTodoList] = useState<BasicObject[]>([])
 
   const onHandleBack = () => {
     setInputText('')
@@ -37,18 +42,28 @@ export default function App() {
     setTodoList(filteredItems)
   }
 
+  const renderItem = ({ item }: BasicObject) => {
+    return (
+      <TouchableOpacity
+        key={item.id}
+        onPress={() => onHandleRemoveItem(item.id)}
+      >
+        <Text key={item.text} style={styles.listStyle}>
+          {item.text}
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <Button text='Add Todo' onPressButton={() => setShowModal(true)} />
       <View>
-        {todoList.length > 0 &&
-          todoList.map(({ text, id }) => (
-            <TouchableOpacity key={id} onPress={() => onHandleRemoveItem(id)}>
-              <Text key={text} style={styles.listStyle}>
-                {text}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <FlatList
+          data={todoList}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
       </View>
 
       <Modal visible={showModal} animationType='slide'>
