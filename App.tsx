@@ -32,13 +32,12 @@ export default function App() {
   }
 
   const onHandleRemoveItem = (id: string) => {
-    const filteredItems = todoList.filter((item, idx) => {
-      idx.toString() !== id
-    })
+    const filteredItems = todoList.filter(
+      (item, idx) => idx.toString() !== id.toString()
+    )
     setTodoList(filteredItems)
   }
 
-  console.log(todoList)
   return (
     <View style={styles.container}>
       <Button text='Add Todo' onPressButton={() => setShowModal(true)} />
@@ -46,6 +45,7 @@ export default function App() {
         {todoList.length > 0 &&
           todoList.map((item, idx) => (
             <TouchableOpacity
+              key={idx}
               onPress={() => onHandleRemoveItem(idx.toString())}
             >
               <Text key={item} style={styles.listStyle}>
