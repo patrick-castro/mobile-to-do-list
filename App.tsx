@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
+import { v4 as uuidv4 } from 'uuid'
 
 // Components
 import Button from './components/Button'
@@ -15,7 +16,7 @@ import Button from './components/Button'
 export default function App() {
   const [showModal, setShowModal] = useState(false)
   const [inputText, setInputText] = useState('')
-  const [todoList, setTodoList] = useState<string[]>([])
+  const [todoList, setTodoList] = useState<{ [key: string]: string }[]>([])
 
   const onHandleBack = () => {
     setInputText('')
@@ -26,15 +27,13 @@ export default function App() {
       return
     }
 
-    setTodoList([...todoList, inputText])
+    setTodoList([...todoList, { text: inputText, id: uuidv4() }])
     setInputText('')
     setShowModal(false)
   }
 
   const onHandleRemoveItem = (id: string) => {
-    const filteredItems = todoList.filter(
-      (item, idx) => idx.toString() !== id.toString()
-    )
+    const filteredItems = todoList.filter((item) => item.id !== id)
     setTodoList(filteredItems)
   }
 
@@ -43,13 +42,10 @@ export default function App() {
       <Button text='Add Todo' onPressButton={() => setShowModal(true)} />
       <View>
         {todoList.length > 0 &&
-          todoList.map((item, idx) => (
-            <TouchableOpacity
-              key={idx}
-              onPress={() => onHandleRemoveItem(idx.toString())}
-            >
-              <Text key={item} style={styles.listStyle}>
-                {item}
+          todoList.map(({ text, id }) => (
+            <TouchableOpacity key={id} onPress={() => onHandleRemoveItem(id)}>
+              <Text key={text} style={styles.listStyle}>
+                {text}
               </Text>
             </TouchableOpacity>
           ))}
